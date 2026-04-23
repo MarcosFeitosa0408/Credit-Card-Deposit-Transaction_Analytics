@@ -12,56 +12,52 @@ styles = getSampleStyleSheet()
 story = []
 
 content = """
-a) Taxa de aprovação por trimestre  
-2020 Q4: 62,86%  
-2021 Q1: 61,48%  
-2021 Q2: 60,34%  
-2021 Q3: 59,42%  
+b) Chargeback rate by quarter (on approved transactions)
+2020 Q4: 8.00%
+2021 Q1: 7.66%
+2021 Q2: 7.86%
+2021 Q3: 7.69%
 
-Queda contínua e consistente — não é ruído, é tendência estrutural.
+Relatively stable → the issue is not increasing fraud, but declining approval rates.
 
-b) Taxa de chargeback por trimestre (sobre transações aprovadas)  
-2020 Q4: 8,00%  
-2021 Q1: 7,66%  
-2021 Q2: 7,86%  
-2021 Q3: 7,69%  
+c) Customers who attempted a $50 deposit in September 2021
+1,803 unique customers
 
-Relativamente estável → o problema não é fraude crescente, mas sim aprovação caindo.
+d) Total approved amount from this group (September 2021)
+$113,634.87
 
-c) Clientes que tentaram depósito de $50 em setembro/2021  
-1.803 clientes únicos
+e) Bank with the highest approval rate (top 10 banks, $150–$999 in 2021)
+BANK1002 (~69.8%)
 
-d) Valor total aprovado desse grupo (setembro/2021)  
-$113.634,87
+Insight: Significant variation across banks → strong evidence of issuer impact.
 
-e) Banco com maior taxa de aprovação (top 10 bancos, $150–$999 em 2021)  
-BANK1002 (~69,8%)  
+f) Main suspects behind the approval rate decline
 
-Insight: grande variação entre bancos → forte evidência de impacto do emissor.
+Issuing bank
+Processing company / antifraud system
 
-f) Suspeitos principais da queda de aprovação  
-- Banco emissor  
-- Empresa de processamento / antifraude  
+g) Root causes of the decline (Q3 2021 vs Q4 2020)
 
-g) Causas reais da queda (Q3 2021 vs Q4 2020)  
-1. Mudança no mix de risco (valor + perfil de cliente)  
-2. Aumento de restrições no processamento  
+Shift in risk mix (transaction size + customer profile)
+Increased processing restrictions
 
-A queda é gradual → típico de ajuste progressivo de risco.
+The decline is gradual → typical of progressive risk tightening.
 
-h) Fatores que aumentam chargeback  
-- Clientes recorrentes com comportamento suspeito  
-- Certos bancos emissores  
-- Valores específicos (ex: $50)
+h) Factors driving higher chargeback rates
 
-i) Análises adicionais (nível sênior)  
-- Cohort de clientes  
-- Interação banco + processamento  
-- Análise temporal  
-- Distribuição de valores  
-- Taxa de retry  
-- Funil completo  
-- Segmentação de fraude  
+Repeat customers with suspicious behavior
+Specific issuing banks
+Certain transaction amounts (e.g., $50)
+
+i) Additional analysis (senior level)
+
+Customer cohort analysis
+Bank × processor interaction
+Time-based analysis
+Value distribution
+Retry rate
+Full funnel analysis
+Fraud segmentation
 
 Frase para entrevista:  
 “I would focus on interaction effects between issuing banks and processors, as isolated analysis may hide the real driver.”
