@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transaction Analytics Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; background: #f5f4f0; color: #1a1a18; padding: 2rem; }
+  h1 { font-size: 20px; font-weight: 500; margin-bottom: 4px; }
+  .subtitle { font-size: 13px; color: #666; margin-bottom: 2rem; }
+  .section { margin-bottom: 2.5rem; }
+  .section-title { font-size: 11px; font-weight: 500; color: #888; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 0.5px solid #ddd; }
+  .metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 16px; }
+  .metric { background: #ebebeb; border-radius: 8px; padding: 12px 14px; }
+  .metric .label { font-size: 12px; color: #666; margin-bottom: 4px; }
+  .metric .value { font-size: 20px; font-weight: 500; }
+  .metric .sub { font-size: 11px; color: #999; margin-top: 2px; }
+  .metric.highlight { background: #ddeeff; }
+  .metric.highlight .value { color: #185fa5; }
+  .metric.warn { background: #fdf0da; }
+  .metric.warn .value { color: #854f0b; }
+  .metric.danger { background: #fce8e8; }
+  .metric.danger .value { color: #a32d2d; }
+  .metric.success { background: #eaf3de; }
+  .metric.success .value { color: #3b6d11; }
+  .chart-wrap { position: relative; width: 100%; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .card { background: #fff; border: 0.5px solid #ddd; border-radius: 12px; padding: 14px 16px; }
+  table { width: 100%; font-size: 13px; border-collapse: collapse; }
+  th { font-weight: 500; font-size: 11px; color: #888; text-align: left; padding: 6px 8px; border-bottom: 0.5px solid #ddd; }
+  td { padding: 6px 8px; border-bottom: 0.5px solid #eee; color: #1a1a18; }
+  tr:last-child td { border-bottom: none; }
+  .badge { display: inline-block; font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 999px; }
+  .badge-danger { background: #fce8e8; color: #a32d2d; }
+  .badge-success { background: #eaf3de; color: #3b6d11; }
+  .badge-warn { background: #fdf0da; color: #854f0b; }
+  .badge-info { background: #ddeeff; color: #185fa5; }
+  @media (max-width: 600px) { .two-col { grid-template-columns: 1fr; } body { padding: 1rem; } }
+</style>
+</head>
+<body>
+
+<h1>Credit Card Deposit Transaction Analytics</h1>
+<p class="subtitle">12-month anonymized sample · Oct 1, 2020 – Sep 26, 2021 · 124,170 records</p>
+
+<div class="section">
+  <div class="section-title">Q1 — Quarterly approval &amp; chargeback rates</div>
+  <div class="metric-grid">
+    <div class="metric"><div class="label">Q4 2020 approval</div><div class="value">62.9%</div><div class="sub">32,372 attempts</div></div>
+    <div class="metric"><div class="label">Q1 2021 approval</div><div class="value">61.5%</div><div class="sub">34,752 attempts</div></div>
+    <div class="metric warn"><div class="label">Q2 2021 approval</div><div class="value">60.3%</div><div class="sub">29,075 attempts</div></div>
+    <div class="metric danger"><div class="label">Q3 2021 approval</div><div class="value">59.4%</div><div class="sub">27,971 attempts</div></div>
+  </div>
+  <div class="chart-wrap" style="height: 200px;"><canvas id="approvalChart" role="img" aria-label="Approval rate declining from 62.9% in Q4 2020 to 59.4% in Q3 2021">Approval rates: Q4 2020 62.9%, Q1 2021 61.5%, Q2 2021 60.3%, Q3 2021 59.4%</canvas></div>
+
+  <div style="margin-top: 20px; margin-bottom: 10px; font-size: 11px; font-weight: 500; color: #999;">Chargeback rate (on approved transactions)</div>
+  <div class="metric-grid">
+    <div class="metric"><div class="label">Q4 2020 CB rate</div><div class="value">8.00%</div><div class="sub">1,628 of 20,349</div></div>
+    <div class="metric success"><div class="label">Q1 2021 CB rate</div><div class="value">7.66%</div><div class="sub">1,636 of 21,366</div></div>
+    <div class="metric"><div class="label">Q2 2021 CB rate</div><div class="value">7.86%</div><div class="sub">1,379 of 17,543</div></div>
+    <div class="metric"><div class="label">Q3 2021 CB rate</div><div class="value">7.70%</div><div class="sub">1,279 of 16,621</div></div>
+  </div>
+  <div class="chart-wrap" style="height: 180px;"><canvas id="cbChart" role="img" aria-label="Chargeback rate stable around 7.7-8.0%">Chargeback rates by quarter</canvas></div>
+</div>
+
+<div class="section">
+  <div class="section-title">Q2 &amp; Q3 — September 2021 $50 deposit cohort</div>
+  <div class="metric-grid">
+    <div class="metric highlight"><div class="label">Unique customers ($50 in Sept 2021)</div><div class="value">1,803</div><div class="sub">2,170 total attempts</div></div>
+    <div class="metric highlight"><div class="label">Total successfully deposited</div><div class="value">$113,635</div><div class="sub">1,882 approved transactions</div></div>
+    <div class="metric"><div class="label">Cohort approval rate</div><div class="value">86.7%</div><div class="sub">vs 59.4% overall in Q3</div></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Q4 — Top 10 issuing banks ($150–$999.99 in 2021): approval rates</div>
+  <div class="card">
+    <table>
+      <thead><tr><th>Issuing bank</th><th>Attempts</th><th>Approved</th><th>Approval rate</th><th></th></tr></thead>
+      <tbody>
+        <tr><td><strong>BANK1002</strong></td><td>2,982</td><td>2,081</td><td><strong>69.8%</strong></td><td><span class="badge badge-success">Highest</span></td></tr>
+        <tr><td>BANK1010</td><td>702</td><td>427</td><td>60.8%</td><td></td></tr>
+        <tr><td>BANK1000</td><td>4,044</td><td>2,455</td><td>60.7%</td><td></td></tr>
+        <tr><td>BANK1019</td><td>382</td><td>215</td><td>56.3%</td><td></td></tr>
+        <tr><td>BANK1001</td><td>2,010</td><td>1,078</td><td>53.6%</td><td></td></tr>
+        <tr><td>BANK1006</td><td>436</td><td>218</td><td>50.0%</td><td></td></tr>
+        <tr><td>BANK1004</td><td>966</td><td>482</td><td>49.9%</td><td></td></tr>
+        <tr><td>BANK1015</td><td>300</td><td>146</td><td>48.7%</td><td></td></tr>
+        <tr><td>BANK1017</td><td>324</td><td>132</td><td>40.7%</td><td></td></tr>
+        <tr><td>BANK1013</td><td>638</td><td>257</td><td>40.3%</td><td><span class="badge badge-danger">Lowest</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Q6 — Causal factors: approval rate decline (Q4 2020 → Q3 2021)</div>
+  <div class="two-col" style="margin-bottom: 14px;">
+    <div class="card">
+      <div style="font-size: 13px; font-weight: 500; margin-bottom: 8px;">Factor 1: Co Website 22 traffic surge</div>
+      <div class="metric-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 10px;">
+        <div class="metric"><div class="label">Website 22 share Q4 '20</div><div class="value" style="font-size:16px;">3.9%</div></div>
+        <div class="metric warn"><div class="label">Website 22 share Q3 '21</div><div class="value" style="font-size:16px;">10.3%</div></div>
+      </div>
+      <div style="font-size: 12px; color: #666; line-height: 1.6;">Website 22 approval rate is ~47.5% vs ~61.8% for Website 14. The 6.4pp share increase contributed an estimated <strong>~0.9pp</strong> drag on the overall rate.</div>
+    </div>
+    <div class="card">
+      <div style="font-size: 13px; font-weight: 500; margin-bottom: 8px;">Factor 2: Processor mix degradation</div>
+      <div class="metric-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 10px;">
+        <div class="metric success"><div class="label">Proc 100 rate (all periods)</div><div class="value" style="font-size:16px;">81–92%</div></div>
+        <div class="metric danger"><div class="label">Proc 100 Q3 '21 volume</div><div class="value" style="font-size:16px;">339</div><div class="sub">vs 3,304 in Q4 '20</div></div>
+      </div>
+      <div style="font-size: 12px; color: #666; line-height: 1.6;">Proc 100 lost 90% of volume. Proc 111 dropped from 72% → 57% approval. New Proc 182 absorbed 2,331 Q3 attempts at only 54%.</div>
+    </div>
+  </div>
+  <div class="chart-wrap" style="height: 200px;"><canvas id="webShareChart" role="img" aria-label="Website traffic share: Website 22 grows from 3.9% to 10.3%">Website traffic share by quarter</canvas></div>
+</div>
+
+<div class="section">
+  <div class="section-title">Q7 — Causal factors: chargeback rate elevation</div>
+  <div class="two-col">
+    <div class="card">
+      <div style="font-size: 13px; font-weight: 500; margin-bottom: 8px;">Factor 1: High-CB issuing banks</div>
+      <table>
+        <thead><tr><th>Bank</th><th>CB rate</th><th>Avg deposit</th></tr></thead>
+        <tbody>
+          <tr><td>BANK1002</td><td><span class="badge badge-danger">13.5%</span></td><td>$206</td></tr>
+          <tr><td>BANK1001</td><td><span class="badge badge-warn">10.5%</span></td><td>—</td></tr>
+          <tr><td>BANK1017</td><td><span class="badge badge-warn">10.3%</span></td><td>—</td></tr>
+          <tr><td>Overall avg</td><td>7.8%</td><td>$121</td></tr>
+        </tbody>
+      </table>
+      <div style="font-size: 12px; color: #666; margin-top: 10px; line-height: 1.6;">BANK1002 customers deposit 70% more per transaction than average and chargeback at 1.7× the portfolio rate.</div>
+    </div>
+    <div class="card">
+      <div style="font-size: 13px; font-weight: 500; margin-bottom: 8px;">Factor 2: Higher-value deposits</div>
+      <table>
+        <thead><tr><th>Amount range</th><th>CB rate</th></tr></thead>
+        <tbody>
+          <tr><td>$0–$200</td><td>7.7%</td></tr>
+          <tr><td>$201–$500</td><td>8.5%</td></tr>
+          <tr><td>$501–$1,000</td><td><span class="badge badge-warn">9.0%</span></td></tr>
+          <tr><td>$1,001+</td><td><span class="badge badge-danger">10.5%</span></td></tr>
+        </tbody>
+      </table>
+      <div style="font-size: 12px; color: #666; margin-top: 10px; line-height: 1.6;">Chargeback rate scales monotonically with deposit size — consistent with bust-out fraud patterns.</div>
+    </div>
+  </div>
+  <div style="margin-top: 12px;" class="card">
+    <div style="font-size: 13px; font-weight: 500; margin-bottom: 6px;">Supporting: Processor 111 rising CB trend</div>
+    <div style="font-size: 12px; color: #666; line-height: 1.6;">Proc 111's chargeback rate rose from 11.6% (Q4 '20) to 13.5% (Q2–Q3 '21), the highest among all high-volume processors. Combined with its declining approval rate, this is the single highest-risk exposure point in the portfolio.</div>
+  </div>
+</div>
+
+<script>
+const gridColor = 'rgba(0,0,0,0.07)';
+const textColor = '#666';
+const baseOpts = {
+  responsive: true, maintainAspectRatio: false,
+  plugins: { legend: { display: false } },
+  scales: {
+    x: { grid: { color: gridColor }, ticks: { color: textColor, font: { size: 11 } } },
+    y: { grid: { color: gridColor }, ticks: { color: textColor, font: { size: 11 } } }
+  }
+};
+
+new Chart(document.getElementById('approvalChart'), {
+  type: 'line',
+  data: {
+    labels: ['Q4 2020','Q1 2021','Q2 2021','Q3 2021'],
+    datasets: [{
+      label: 'Approval rate',
+      data: [62.86, 61.48, 60.34, 59.42],
+      borderColor: '#3266ad', backgroundColor: 'rgba(50,102,173,0.08)',
+      borderWidth: 2, pointBackgroundColor: '#3266ad', pointRadius: 5, fill: true, tension: 0.3
+    }]
+  },
+  options: { ...baseOpts, scales: { ...baseOpts.scales, y: { ...baseOpts.scales.y, min: 57, max: 65, ticks: { color: textColor, font: { size: 11 }, callback: v => v + '%' } } }, plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ctx.parsed.y.toFixed(2) + '%' } } } }
+});
+
+new Chart(document.getElementById('cbChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Q4 2020','Q1 2021','Q2 2021','Q3 2021'],
+    datasets: [{
+      label: 'CB rate',
+      data: [8.00, 7.66, 7.86, 7.70],
+      backgroundColor: ['#e2844a','#5caa7f','#e2a34a','#5c8daa'],
+      borderRadius: 4
+    }]
+  },
+  options: { ...baseOpts, scales: { ...baseOpts.scales, y: { ...baseOpts.scales.y, min: 7, max: 8.5, ticks: { color: textColor, font: { size: 11 }, callback: v => v + '%' } } }, plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ctx.parsed.y.toFixed(2) + '%' } } } }
+});
+
+new Chart(document.getElementById('webShareChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Q4 2020','Q1 2021','Q2 2021','Q3 2021'],
+    datasets: [
+      { label: 'Website 14', data: [73.8,71.4,69.9,70.0], backgroundColor: '#3266ad', stack: 'a' },
+      { label: 'Website 18', data: [18.1,16.1,14.9,14.2], backgroundColor: '#5caa7f', stack: 'a' },
+      { label: 'Website 22', data: [3.9,7.0,9.7,10.3], backgroundColor: '#e2844a', stack: 'a' },
+      { label: 'Website 23', data: [3.0,4.8,4.6,4.8], backgroundColor: '#9b8fd4', stack: 'a' },
+      { label: 'Other', data: [1.2,0.7,0.9,0.7], backgroundColor: '#aaa', stack: 'a' }
+    ]
+  },
+  options: { ...baseOpts, scales: { ...baseOpts.scales, y: { ...baseOpts.scales.y, ticks: { color: textColor, font: { size: 11 }, callback: v => v + '%' } } }, plugins: { legend: { display: true, position: 'bottom', labels: { font: { size: 11 }, color: textColor, boxWidth: 10, boxHeight: 10 } }, tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + ctx.parsed.y.toFixed(1) + '%' } } } }
+});
+</script>
+</body>
+</html>
