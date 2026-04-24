@@ -43,7 +43,7 @@ Increased processing restrictions
 
 The decline is gradual → typical of progressive risk tightening.
 
-h) Factors driving higher chargeback rates
+h) Factors driving higher chargeback rates.
 
 Repeat customers with suspicious behavior
 Specific issuing banks
